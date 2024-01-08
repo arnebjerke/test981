@@ -11,8 +11,7 @@ steps:
 
 - task: SnykSecurityScan@1
   inputs:
-    serviceConnectionEndpoint: 'SnykUsedforPipelinePurposes'
+    serviceConnectionEndpoint: 'SnykUsedForPipelinePurposes1'
     testType: 'app'
-    severityThreshold: 'high'
     monitorWhen: 'always'
     failOnIssues: true
