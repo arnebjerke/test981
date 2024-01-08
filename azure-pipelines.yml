@@ -1,8 +1,8 @@
 resources:
   repositories:
-  - repository: tools
+  - repository: test981
     type: git
-    name: MyProject/tools
+    name: arnebjerke/test981
     ref: main
     trigger:
     - main
