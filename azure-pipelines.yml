@@ -8,3 +8,11 @@ steps:
 - checkout: self
 
 - script: dir $(Build.SourcesDirectory)
+
+- task: SnykSecurityScan@1
+  inputs:
+    serviceConnectionEndpoint: 'SnykUsedforPipelinePurposes'
+    testType: 'app'
+    severityThreshold: 'high'
+    monitorWhen: 'always'
+    failOnIssues: true
