@@ -15,5 +15,4 @@ steps:
     script: |
       npm install
       npm test
-  workingDirectory: '$(System.DefaultWorkingDirectory)'
   displayName: 'Install dependencies and run tests'
