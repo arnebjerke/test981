@@ -5,20 +5,23 @@ pool:
   vmImage: 'ubuntu-latest'
 
 steps:
-- task: UseNode@1
+- task: GitClone@2
   inputs:
-    version: '10.x'
+    repository: 'https://github.com/snyk/nodejs-sample-app'
+    clean: true
+    checkoutSubmodules: false
+    persistCredentials: true
+  displayName: 'Clone GitHub repository'
 
-- task: Npm@1
+- task: CmdLine@2
   inputs:
-    command: 'install'
-    workingDir: '$(System.DefaultWorkingDirectory)'
+    script: 'cd $(Build.Repository.LocalPath) && npm init -y'
+  displayName: 'Create package.json file'
 
 - task: SnykSecurityScan@1
   inputs:
-    serviceConnectionEndpoint: 'SnykUsedforPipelinePurposes'
-    testType: 'app'
-    monitorWhen: 'always'
-    failOnIssues: true
+    serviceConnectionEndpoint: '<your_snyk_service_connection>'
+    command: 'test'
     flags: '--severity-threshold=high'
-    workingDir: '$(System.DefaultWorkingDirectory)'
+    file: 'package.json'
+  displayName: 'Run Snyk Security Scan'
