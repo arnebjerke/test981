@@ -14,9 +14,11 @@ steps:
     command: 'install'
     workingDir: '$(System.DefaultWorkingDirectory)'
 
-- task: SnykTask@1
+- task: SnykSecurityScan@1
   inputs:
     serviceConnectionEndpoint: 'SnykUsedforPipelinePurposes'
-    command: 'test'
+    testType: 'app'
+    monitorWhen: 'always'
+    failOnIssues: true
     flags: '--severity-threshold=high'
     workingDir: '$(System.DefaultWorkingDirectory)'
