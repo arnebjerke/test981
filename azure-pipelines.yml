@@ -5,6 +5,9 @@ pool:
   vmImage: ubuntu-latest
 
 steps:
+- script: dotnet new --install Microsoft.NETCore.App
+  displayName: 'Install .NET templates'
+
 - task: UseDotNet@2
   inputs:
     packageType: 'sdk'
