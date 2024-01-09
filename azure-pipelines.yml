@@ -1,34 +1,47 @@
-resources:
-  repositories:
-  - repository: test981
-    type: git
-    name: arnebjerke/test981
-    ref: main
-    trigger:
-    - main
-    - release
-
-  - repository: MyGitHubRepo
-    type: github
-    endpoint: MyGitHubServiceConnection
-    name: MyGitHubOrgOrUser/MyGitHubRepo
-    ref: releases/123
-
-  - repository: MyOtherAzureReposGitRepository 
-    endpoint: OtherOrgAzureReposGitServiceConnection
-    type: git
-    name: OtherProject/MyAzureReposGitRepo
-
 trigger:
 - main
 
 pool:
-  vmImage: 'ubuntu-latest'
+  vmImage: ubuntu-latest
 
 steps:
-- checkout: self
-- checkout: MyGitHubRepo
-- checkout: tools
-- checkout: MyOtherAzureReposGitRepository
+- task: UseDotNet@2
+  inputs:
+    packageType: 'sdk'
+    version: '5.x'
+  displayName: 'Install .NET Core SDK'
 
-- script: dir $(Build.SourcesDirectory)
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'new'
+    arguments: 'console -n MyTestApp'
+  displayName: 'Create new .NET Core console app'
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'restore'
+    projects: 'MyTestApp/MyTestApp.csproj'
+  displayName: 'Restore packages'
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'build'
+    projects: 'MyTestApp/MyTestApp.csproj'
+  displayName: 'Build'
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'test'
+    projects: 'MyTestApp/MyTestApp.csproj'
+    arguments: '--configuration $(BuildConfiguration)'
+    testRunTitle: 'Unit tests'
+  displayName: 'Run unit tests'
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'publish'
+    publishWebProjects: true
+    arguments: '--no-build --configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)'
+    zipAfterPublish: true
+  displayName: 'Publish artifacts'
+  condition: succeededOrFailed()
