@@ -5,23 +5,15 @@ pool:
   vmImage: 'ubuntu-latest'
 
 steps:
-- task: GitClone@2
+- task: NodeTool@0
   inputs:
-    repository: 'https://github.com/snyk/nodejs-sample-app'
-    clean: true
-    checkoutSubmodules: false
-    persistCredentials: true
-  displayName: 'Clone GitHub repository'
+    versionSpec: '14.x'
+  displayName: 'Install Node.js'
 
 - task: CmdLine@2
   inputs:
-    script: 'cd $(Build.Repository.LocalPath) && npm init -y'
-  displayName: 'Create package.json file'
-
-- task: SnykSecurityScan@1
-  inputs:
-    serviceConnectionEndpoint: '<your_snyk_service_connection>'
-    command: 'test'
-    flags: '--severity-threshold=high'
-    file: 'package.json'
-  displayName: 'Run Snyk Security Scan'
+    script: |
+      npm install
+      npm test
+  workingDirectory: '$(System.DefaultWorkingDirectory)'
+  displayName: 'Install dependencies and run tests'
