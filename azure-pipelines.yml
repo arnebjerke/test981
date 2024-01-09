@@ -2,12 +2,21 @@ trigger:
 - main
 
 pool:
-  vmImage: ubuntu-latest
+  vmImage: 'ubuntu-latest'
 
 steps:
-- task: UseDotNet@2
+- task: UseNode@1
   inputs:
-    version: '2.2.x'
+    version: '10.x'
 
-- script: dotnet build
-  displayName: 'Build'
+- task: Npm@1
+  inputs:
+    command: 'install'
+    workingDir: '$(System.DefaultWorkingDirectory)'
+
+- task: SnykTask@1
+  inputs:
+    serviceConnectionEndpoint: 'SnykUsedforPipelinePurposes'
+    command: 'test'
+    flags: '--severity-threshold=high'
+    workingDir: '$(System.DefaultWorkingDirectory)'
